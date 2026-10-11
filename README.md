@@ -1,4 +1,4 @@
-# echoterm
+# EchoHis
 
 Time-capsule shell. Shows what you typed | days / months / years ago.
 
