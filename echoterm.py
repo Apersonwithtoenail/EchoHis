@@ -9,7 +9,14 @@ HIST = Path.home() / ".bash_history"
 NOISE_EXACT = {"PY","PYEOF","SH","MD","EOF","}","]","}","{","#",""}
 NOISE_PREFIX = ("#!","def ","return ","import ","from ","class ",
                 "elif ","else:","try:","except","finally:",
-                "while ","with ","print(","async ","@","s = ","out = ")
+                "while ","with ","print(","async ","@","s = ","out = ","if __name__","sys.exit","return ","elif ","else:","try:","except","finally:")
+
+def is_noise_light(cmd):
+    s = cmd.strip()
+    if not s: return True
+    if s in ("PYEOF","PY","SH","MD","EOF","}"): return True
+    if s.startswith(("#!/","def ","class ","if __name__")): return True
+    return False
 
 def is_noise(cmd):
     if not cmd: return True
@@ -142,6 +149,9 @@ def main():
     lo, hi = t - a.window, t + a.window
     hits = [(ts,c) for ts,c in e_clean if ts and lo <= ts <= hi]
     if a.filter: hits = [(ts,c) for ts,c in hits if a.filter in c]
+    if not hits:
+        bar(f"{dd}d ago", "nothing in this window (try -d 0, --top, or -s <word>)")
+        return
     lbl = ""
     if a.years:  lbl += f"{a.years}y "
     if a.months: lbl += f"{a.months}mo "
